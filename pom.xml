@@ -9,10 +9,10 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>me.akika.github</groupId>
-    <artifactId>mini-github</artifactId>
+    <artifactId>githive</artifactId>
     <version>0.0.1</version>
-    <name>mini-github</name>
-    <description>mini-github</description>
+    <name>githive</name>
+    <description>githive</description>
 
     <properties>
         <java.version>21</java.version>
