@@ -1,13 +1,13 @@
-package me.akika.github;
+package me.akika.githive;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class MiniGithubApplication {
+public class GitHiveApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(MiniGithubApplication.class, args);
+        SpringApplication.run(GitHiveApplication.class, args);
     }
 
 }
