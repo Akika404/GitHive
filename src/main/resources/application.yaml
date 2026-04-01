@@ -1,3 +1,20 @@
 spring:
   application:
     name: githive
+  datasource:
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/githive}
+    username: ${DB_USERNAME:postgres}
+    password: ${DB_PASSWORD:postgres}
+    driver-class-name: org.postgresql.Driver
+
+mybatis-plus:
+  configuration:
+    map-underscore-to-camel-case: true
+
+app:
+  security:
+    jwt:
+      issuer: githive
+      secret: ${JWT_SECRET:change-me-to-a-very-long-secret-key-for-githive-auth}
+      access-token-expire-minutes: 30
+      refresh-token-expire-days: 14
