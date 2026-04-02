@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import me.akika.githive.common.state.SystemRole;
 
 @Getter
 @Setter
@@ -17,6 +18,6 @@ public class AuthUserResponse {
     private String username;
     private String email;
     private String displayName;
-    private String systemRole;
+    private SystemRole systemRole;
     private Boolean emailVerified;
 }

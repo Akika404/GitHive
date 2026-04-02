@@ -18,6 +18,7 @@ import me.akika.githive.auth.util.JwtTokenProvider;
 import me.akika.githive.common.exception.BusinessException;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import me.akika.githive.common.state.SystemRole;
 import me.akika.githive.common.state.UserState;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -58,7 +59,7 @@ public class AuthServiceImpl implements AuthService {
                 .email(email)
                 .passwordHash(passwordEncoder.encode(request.getPassword()))
                 .displayName(displayName)
-                .systemRole("SYSTEM_USER")
+                .systemRole(SystemRole.SYSTEM_USER)
                 .status(UserState.ACTIVE)
                 .emailVerified(false)
                 .createdAt(now)
