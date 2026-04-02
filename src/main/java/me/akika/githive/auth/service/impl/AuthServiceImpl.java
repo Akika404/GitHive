@@ -7,9 +7,11 @@ import me.akika.githive.auth.dto.AuthUserResponse;
 import me.akika.githive.auth.dto.LoginRequest;
 import me.akika.githive.auth.dto.LogoutRequest;
 import me.akika.githive.auth.dto.RefreshTokenRequest;
+import me.akika.githive.auth.dto.RegisterRequest;
 import me.akika.githive.auth.entity.AppUser;
 import me.akika.githive.auth.entity.UserRefreshToken;
 import me.akika.githive.auth.mapper.AppUserMapper;
+import me.akika.githive.auth.service.CaptchaService;
 import me.akika.githive.auth.mapper.UserRefreshTokenMapper;
 import me.akika.githive.auth.service.AuthService;
 import me.akika.githive.auth.util.JwtTokenProvider;
@@ -39,6 +41,36 @@ public class AuthServiceImpl implements AuthService {
     private final PasswordEncoder passwordEncoder;
     private final JwtTokenProvider jwtTokenProvider;
     private final AuthProperties authProperties;
+    private final CaptchaService captchaService;
+
+    @Override
+    @Transactional
+    public AuthUserResponse register(RegisterRequest request) {
+        String username = StringUtils.trim(request.getUsername());
+        String email = StringUtils.lowerCase(StringUtils.trim(request.getEmail()));
+        String displayName = StringUtils.defaultIfBlank(StringUtils.trim(request.getDisplayName()), username);
+
+        validateRegisterRequest(username, email);
+        captchaService.verifyOrThrow(request.getCaptchaKey(), request.getCaptchaCode(), false);
+
+        LocalDateTime now = LocalDateTime.now();
+        AppUser user = AppUser.builder()
+                .username(username)
+                .email(email)
+                .passwordHash(passwordEncoder.encode(request.getPassword()))
+                .displayName(displayName)
+                .systemRole("SYSTEM_USER")
+                .status(USER_STATUS_ACTIVE)
+                .emailVerified(false)
+                .createdAt(now)
+                .updatedAt(now)
+                .build();
+        appUserMapper.insert(user);
+
+        initializeUserNamespace(user);
+        captchaService.consume(request.getCaptchaKey());
+        return toAuthUserResponse(user);
+    }
 
     @Override
     @Transactional
@@ -116,6 +148,30 @@ public class AuthServiceImpl implements AuthService {
         return user;
     }
 
+    private void validateRegisterRequest(String username, String email) {
+        if (StringUtils.containsWhitespace(username)) {
+            throw new BusinessException("用户名不能包含空白字符");
+        }
+
+        boolean usernameExists = appUserMapper.selectCount(
+                new LambdaQueryWrapper<AppUser>()
+                        .eq(AppUser::getUsername, username)
+                        .isNull(AppUser::getDeletedAt)
+        ) > 0;
+        if (usernameExists) {
+            throw new BusinessException("用户名已存在");
+        }
+
+        boolean emailExists = appUserMapper.selectCount(
+                new LambdaQueryWrapper<AppUser>()
+                        .eq(AppUser::getEmail, email)
+                        .isNull(AppUser::getDeletedAt)
+        ) > 0;
+        if (emailExists) {
+            throw new BusinessException("邮箱已被注册");
+        }
+    }
+
     private AuthTokenResponse issueTokenPair(AppUser user, HttpServletRequest httpServletRequest) {
         LocalDateTime accessTokenExpiresAt = LocalDateTime.now().plusMinutes(authProperties.getAccessTokenExpireMinutes());
         LocalDateTime refreshTokenExpiresAt = LocalDateTime.now().plusDays(authProperties.getRefreshTokenExpireDays());
@@ -155,6 +211,11 @@ public class AuthServiceImpl implements AuthService {
                 .systemRole(user.getSystemRole())
                 .emailVerified(user.getEmailVerified())
                 .build();
+    }
+
+    private void initializeUserNamespace(AppUser user) {
+        // Placeholder hook: namespace module is not implemented yet.
+        // Keep the registration flow ready for future user namespace creation.
     }
 
     private String generateRefreshToken() {
