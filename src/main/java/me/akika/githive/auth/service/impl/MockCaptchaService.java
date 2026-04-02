@@ -1,6 +1,5 @@
 package me.akika.githive.auth.service.impl;
 
-import lombok.Getter;
 import me.akika.githive.auth.dto.CaptchaChallengeResponse;
 import me.akika.githive.auth.dto.CaptchaVerifyResponse;
 import me.akika.githive.auth.service.CaptchaService;
@@ -74,16 +73,7 @@ public class MockCaptchaService implements CaptchaService {
         challengeStore.remove(captchaKey);
     }
 
-    @Getter
-    private static class CaptchaChallenge {
-        private final String expectedCode;
-        private final LocalDateTime expiresAt;
-
-        private CaptchaChallenge(String expectedCode, LocalDateTime expiresAt) {
-            this.expectedCode = expectedCode;
-            this.expiresAt = expiresAt;
-        }
-
+    private record CaptchaChallenge(String expectedCode, LocalDateTime expiresAt) {
         private boolean isExpired() {
             return expiresAt.isBefore(LocalDateTime.now());
         }
