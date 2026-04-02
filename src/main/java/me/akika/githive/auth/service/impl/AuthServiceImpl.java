@@ -18,6 +18,7 @@ import me.akika.githive.auth.util.JwtTokenProvider;
 import me.akika.githive.common.exception.BusinessException;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import me.akika.githive.common.state.UserState;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -33,8 +34,6 @@ import java.util.UUID;
 @Service
 @RequiredArgsConstructor
 public class AuthServiceImpl implements AuthService {
-
-    private static final String USER_STATUS_ACTIVE = "ACTIVE";
 
     private final AppUserMapper appUserMapper;
     private final UserRefreshTokenMapper userRefreshTokenMapper;
@@ -60,7 +59,7 @@ public class AuthServiceImpl implements AuthService {
                 .passwordHash(passwordEncoder.encode(request.getPassword()))
                 .displayName(displayName)
                 .systemRole("SYSTEM_USER")
-                .status(USER_STATUS_ACTIVE)
+                .status(UserState.ACTIVE)
                 .emailVerified(false)
                 .createdAt(now)
                 .updatedAt(now)
@@ -79,7 +78,7 @@ public class AuthServiceImpl implements AuthService {
         if (!passwordEncoder.matches(request.getPassword(), user.getPasswordHash())) {
             throw new BusinessException("用户名/邮箱或密码错误");
         }
-        if (!StringUtils.equals(USER_STATUS_ACTIVE, user.getStatus())) {
+        if (user.getStatus() != UserState.ACTIVE) {
             throw new BusinessException("账号不可用");
         }
 
@@ -106,7 +105,7 @@ public class AuthServiceImpl implements AuthService {
         }
 
         AppUser user = appUserMapper.selectById(storedToken.getUserId());
-        if (user == null || user.getDeletedAt() != null || !StringUtils.equals(USER_STATUS_ACTIVE, user.getStatus())) {
+        if (user == null || user.getDeletedAt() != null || user.getStatus() != UserState.ACTIVE) {
             throw new BusinessException("账号不可用");
         }
 

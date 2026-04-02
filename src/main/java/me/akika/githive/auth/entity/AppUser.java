@@ -8,6 +8,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import me.akika.githive.common.state.UserState;
 
 import java.time.LocalDateTime;
 
@@ -26,7 +27,7 @@ public class AppUser {
     private String passwordHash;
     private String displayName;
     private String systemRole;
-    private String status;
+    private UserState status;
     private Boolean emailVerified;
     private LocalDateTime lastLoginAt;
     private LocalDateTime createdAt;
