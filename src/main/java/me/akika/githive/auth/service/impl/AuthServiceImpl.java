@@ -16,6 +16,7 @@ import me.akika.githive.auth.mapper.UserRefreshTokenMapper;
 import me.akika.githive.auth.service.AuthService;
 import me.akika.githive.auth.jwt.JwtTokenProvider;
 import me.akika.githive.common.exception.BusinessException;
+import me.akika.githive.namespace.service.NamespaceService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import me.akika.githive.common.state.SystemRole;
@@ -42,6 +43,7 @@ public class AuthServiceImpl implements AuthService {
     private final JwtTokenProvider jwtTokenProvider;
     private final AuthProperties authProperties;
     private final CaptchaService captchaService;
+    private final NamespaceService namespaceService;
 
     @Override
     @Transactional
@@ -162,6 +164,11 @@ public class AuthServiceImpl implements AuthService {
             throw new BusinessException("用户名已存在");
         }
 
+        // 用户名和组织名共享 namespace 空间，需要额外检查 namespace 唯一性
+        if (namespaceService.existsByPath(username)) {
+            throw new BusinessException("该名称已被占用");
+        }
+
         boolean emailExists = appUserMapper.selectCount(
                 new LambdaQueryWrapper<AppUser>()
                         .eq(AppUser::getEmail, email)
@@ -214,8 +221,7 @@ public class AuthServiceImpl implements AuthService {
     }
 
     private void initializeUserNamespace(AppUser user) {
-        // Placeholder hook: namespace module is not implemented yet.
-        // Keep the registration flow ready for future user namespace creation.
+        namespaceService.createUserNamespace(user);
     }
 
     private String generateRefreshToken() {
