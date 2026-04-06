@@ -11,12 +11,12 @@ import lombok.Setter;
 
 import java.time.LocalDateTime;
 
-@TableName("user_refresh_token")
 @Getter
 @Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@TableName("user_refresh_token")
 public class UserRefreshToken {
 
     @TableId(type = IdType.AUTO)
@@ -30,4 +30,5 @@ public class UserRefreshToken {
     private LocalDateTime revokedAt;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+
 }

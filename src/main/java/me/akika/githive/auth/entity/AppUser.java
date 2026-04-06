@@ -13,12 +13,12 @@ import me.akika.githive.common.state.UserState;
 
 import java.time.LocalDateTime;
 
-@TableName("app_user")
 @Getter
 @Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@TableName("app_user")
 public class AppUser {
 
     @TableId(type = IdType.AUTO)
@@ -34,4 +34,5 @@ public class AppUser {
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
     private LocalDateTime deletedAt;
+
 }
