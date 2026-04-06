@@ -14,7 +14,7 @@ import me.akika.githive.auth.mapper.AppUserMapper;
 import me.akika.githive.auth.service.CaptchaService;
 import me.akika.githive.auth.mapper.UserRefreshTokenMapper;
 import me.akika.githive.auth.service.AuthService;
-import me.akika.githive.auth.util.JwtTokenProvider;
+import me.akika.githive.auth.jwt.JwtTokenProvider;
 import me.akika.githive.common.exception.BusinessException;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;

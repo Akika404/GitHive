@@ -12,6 +12,7 @@ import me.akika.githive.auth.dto.LoginRequest;
 import me.akika.githive.auth.dto.LogoutRequest;
 import me.akika.githive.auth.dto.RefreshTokenRequest;
 import me.akika.githive.auth.dto.RegisterRequest;
+import me.akika.githive.auth.annotation.Public;
 import me.akika.githive.auth.service.AuthService;
 import me.akika.githive.auth.service.CaptchaService;
 import me.akika.githive.common.api.ApiResponse;
@@ -20,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+@Public
 @RestController
 @RequestMapping("/api/auth")
 @RequiredArgsConstructor
